@@ -1,0 +1,58 @@
+<mvc:View xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	controllerName="br.com.idxtecProdutos.controller.GravarProduto"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:f="sap.ui.layout.form">
+	<App>
+		<pages>
+			<Page title="Gravar Produto"
+				showNavButton="true"
+				navButtonPress="onVoltar">
+				<content>
+					<VBox class="sapUiSmallMargin">	
+						<f:SimpleForm id="SimpleFormChange480_Trial"
+						editable="true"
+						layout="ResponsiveGridLayout"
+						title="Novo Produto"
+						labelSpanXL="4"
+						labelSpanL="4"
+						labelSpanM="4"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="0"
+						emptySpanL="0"
+						emptySpanM="0"
+						emptySpanS="0"
+						columnsXL="3"
+						columnsL="2"
+						columnsM="2"
+						singleContainerFullSize="false">
+							<f:content>
+								<Label text="Código" labelFor="codigo"/>
+								<Input id="codigo" value="{model>/Codigo}" required="true"/>
+						
+								<Label text="Descricao" labelFor="descricao"/>
+								<Input id="descricao" value="{model>/Descricao}" required="true"/>
+						
+								<Label text="Unidade de medida" labelFor="unidade"/>
+								<ComboBox selectedKey="{model>/UnidadeMedida}"
+									items="{path: '/UnidadeMedidas'}"
+									id="unidade"
+									required="true">
+									<core:ListItem key="{Id}" text="{Sigla}"/>
+								</ComboBox>
+							</f:content>
+						</f:SimpleForm>
+					</VBox>
+				</content>
+				<footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button id="salvar" text="Salvar" press="onSalvar" class="sapUiSmallMarginEnd"/>
+					</Toolbar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
