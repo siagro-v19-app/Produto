@@ -24,11 +24,17 @@ sap.ui.define([
 			var oParam = this.getOwnerComponent().getModel("parametros").getData();
 			var oJSONModel = this.getOwnerComponent().getModel("model");
 			var oModel = this.getOwnerComponent().getModel();
+			var oViewModel = this.getOwnerComponent().getModel("view"); 
 			
 			this._operacao = oParam.operacao;
 			this._sPath = oParam.sPath;
 			
 			if(this._operacao === "incluir"){
+				
+				oViewModel.setData({
+					titulo: "Inserir Novo Produto"	
+				});
+				
 				var oNovoProduto = {
 					"Id": 0,
 					"Codigo": "",
@@ -40,6 +46,11 @@ sap.ui.define([
 				
 				this.getView().byId("unidade").setSelectedKey("");
 			} else if(this._operacao === "editar"){
+				
+				oViewModel.setData({
+					titulo: "Editar Produto"	
+				});
+				
 				oModel.read(oParam.sPath, {
 					success: function(oData){
 						oJSONModel.setData(oData);
@@ -52,10 +63,6 @@ sap.ui.define([
 		},
 		
 		onSalvar: function(){
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			var oHistory = History.getInstance();
-			var sPreviousHash = oHistory.getPreviousHash();
-			
 			if (this._checarCampos(this.getView())) {
 				MessageBox.information("Preencha todos os campos obrigatórios!");
 				return;
@@ -63,24 +70,27 @@ sap.ui.define([
 			
 			if(this._operacao === "incluir"){
 				this._createProduto();
-				if (sPreviousHash !== undefined) {
-					window.history.go(-1);
-				} else {
-					oRouter.navTo("produtos", {}, true);
-				}
 			}else if(this._operacao === "editar"){
 				this._updateProduto();
-				if (sPreviousHash !== undefined) {
-					window.history.go(-1);
-				} else {
-					oRouter.navTo("produtos", {}, true);
-				}
+			}
+		},
+		
+		_goBack: function(){
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			var oHistory = History.getInstance();
+			var sPreviousHash = oHistory.getPreviousHash();
+			
+			if (sPreviousHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				oRouter.navTo("produtos", {}, true);
 			}
 		},
 		
 		_createProduto: function(){
 			var oModel = this.getOwnerComponent().getModel();
 			var oJSONModel = this.getOwnerComponent().getModel("model");
+			var that = this;
 			
 			var oDados = oJSONModel.getData();
 			
@@ -92,7 +102,11 @@ sap.ui.define([
 			};
 			oModel.create("/Produtos", oDados, {
 				success: function() {
-					MessageBox.success("Produto inserido com sucesso.");
+					MessageBox.success("Produto inserido com sucesso.", {
+						onClose: function(){
+							that._goBack();
+						}
+					});
 				},
 				error: function(oError) {
 					MessageBox.error(oError.responseText);
@@ -103,6 +117,7 @@ sap.ui.define([
 		_updateProduto: function(){
 			var oModel = this.getOwnerComponent().getModel();
 			var oJSONModel = this.getOwnerComponent().getModel("model");
+			var that = this;
 			
 			var oDados = oJSONModel.getData();
 			
@@ -115,7 +130,11 @@ sap.ui.define([
 			
 			oModel.update(this._sPath, oDados, {
 				success: function(){
-					MessageBox.success("Produto alterado com sucesso.");
+					MessageBox.success("Produto alterado com sucesso.", {
+						onClose: function(){
+							that._goBack();
+						}
+					});
 				},
 				error: function(oError){
 					MessageBox.error(oError.responseText);
@@ -133,16 +152,7 @@ sap.ui.define([
 		},
 		
 		onVoltar: function(){
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			var oHistory = History.getInstance();
-			var sPreviousHash = oHistory.getPreviousHash();
-		
-			if (sPreviousHash !== undefined) {
-				window.history.go(-1);
-			} else {
-				oRouter.navTo("produtos", {}, true);
-			}
+			this._goBack(); 
 		}
 	});
-
 });

@@ -6,15 +6,14 @@
 	xmlns:f="sap.ui.layout.form">
 	<App>
 		<pages>
-			<Page title="Gravar Produto"
-				showNavButton="true"
+			<Page showNavButton="true"
 				navButtonPress="onVoltar">
 				<content>
 					<VBox class="sapUiSmallMargin">	
 						<f:SimpleForm id="SimpleFormChange480_Trial"
 						editable="true"
 						layout="ResponsiveGridLayout"
-						title="Novo Produto"
+						title="{view>/titulo}"
 						labelSpanXL="4"
 						labelSpanL="4"
 						labelSpanM="4"
