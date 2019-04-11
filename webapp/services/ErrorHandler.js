@@ -4,7 +4,7 @@ sap.ui.define([
 	], function (UI5Object, MessageBox) {
 		"use strict";
 
-		return UI5Object.extend("br.com.idxtecPlanoConta.services.ErrorHandler", {
+		return UI5Object.extend("br.com.idxtecProdutos.services.ErrorHandler", {
 
 			constructor : function (oComponent) {
 				this._oComponent = oComponent;
