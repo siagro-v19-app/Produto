@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"br/com/idxtecProdutos/model/models"
-], function(UIComponent, Device, models) {
+	"br/com/idxtecProdutos/model/models",
+	"br/com/idxtecProdutos/services/ErrorHandler"
+], function(UIComponent, Device, models, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("br.com.idxtecProdutos.Component", {
@@ -17,7 +18,8 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function() {
-			// call the base component's init function
+			
+			this._oErrorHandler = new ErrorHandler(this);
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set the device model
@@ -25,6 +27,12 @@ sap.ui.define([
 			this.setModel(models.createViewModel(), "view");
 			
 			this.getRouter().initialize();
+		},
+		
+		destroy: function(){
+			this._oErrorHandler.destroy();
+			
+			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 		
 		getContentDensityClass: function(){

@@ -6,49 +6,98 @@
 	xmlns:f="sap.ui.layout.form">
 	<App>
 		<pages>
-			<Page showNavButton="true"
-				navButtonPress="onVoltar">
+			<Page showHeader="false">
 				<content>
-					<VBox class="sapUiSmallMargin">	
-						<f:SimpleForm id="SimpleFormChange480_Trial"
-						editable="true"
-						layout="ResponsiveGridLayout"
-						title="{view>/titulo}"
-						labelSpanXL="4"
-						labelSpanL="4"
-						labelSpanM="4"
-						labelSpanS="12"
-						adjustLabelSpan="false"
-						emptySpanXL="0"
-						emptySpanL="0"
-						emptySpanM="0"
-						emptySpanS="0"
-						columnsXL="3"
-						columnsL="2"
-						columnsM="2"
-						singleContainerFullSize="false">
-							<f:content>
-								<Label text="Código" labelFor="codigo"/>
-								<Input id="codigo" value="{model>/Codigo}" required="true"/>
-						
-								<Label text="Descricao" labelFor="descricao"/>
-								<Input id="descricao" value="{model>/Descricao}" required="true"/>
-						
-								<Label text="Unidade de medida" labelFor="unidade"/>
-								<ComboBox selectedKey="{model>/UnidadeMedida}"
-									items="{path: '/UnidadeMedidas'}"
-									id="unidade"
-									required="true">
-									<core:ListItem key="{Id}" text="{Sigla}"/>
-								</ComboBox>
-							</f:content>
-						</f:SimpleForm>
+					<VBox class="sapUiSmallMargin">
+						<Panel headerText="Produto">
+							<f:SimpleForm id="formProduto"
+								editable="true"
+								layout="ResponsiveGridLayout"
+								labelSpanXL="4"
+								labelSpanL="4"
+								labelSpanM="4"
+								labelSpanS="12"
+								adjustLabelSpan="false"
+								emptySpanXL="0"
+								emptySpanL="0"
+								emptySpanM="0"
+								emptySpanS="0"
+								columnsXL="3"
+								columnsL="2"
+								columnsM="2"
+								singleContainerFullSize="false">
+								<f:content>
+									<core:Title text="{view>/titulo}"/>
+									<Label text="Código" labelFor="codigo"/>
+									<Input id="codigo" value="{model>/Codigo}" required="true"/>
+							
+									<Label text="Descricao" labelFor="descricao"/>
+									<Input id="descricao" value="{model>/Descricao}" required="true"/>
+							
+									<Label text="Unidade de medida" labelFor="unidade"/>
+									<Input selectedKey="{path: 'model>/UnidadeMedida', type: 'sap.ui.model.odata.type.Int32'}"
+										textFormatMode="KeyValue"
+										showSuggestion="true"
+										showValueHelp="true"
+										valueHelpRequest="handleSearchUnidade"
+										suggestionItems="{
+											path: '/UnidadeMedidas',
+											events: {
+												dataReceived: '.unidadeMedidaReceived'
+											}
+										}"
+										id="unidade"
+										required="true">
+										<suggestionItems>
+											<core:ListItem key="{Id}" text="{Sigla}"/>
+										</suggestionItems>
+									</Input>
+									
+									<Label text="Conta contábil" labelFor="contacontabil"/>
+									<Input selectedKey="{model>/ContaContabil}"
+										textFormatMode="KeyValue"
+										showSuggestion="true"
+										showValueHelp="true"
+										valueHelpRequest="handleSearchConta"
+										suggestionItems="{
+											path: '/PlanoContas',
+											events: {
+												dataReceived: '.contaContabilReceived'
+											}
+										}"
+										id="contacontabil">
+										<suggestionItems>
+											<core:ListItem key="{Codigo}" text="{Descricao}"/>
+										</suggestionItems>
+									</Input>
+									
+									<Label text="Item contábil" labelFor="itemcontabil"/>
+									<Input selectedKey="{path: 'model>/ItemContabil', type: 'sap.ui.model.odata.type.Int32'}"
+										textFormatMode="KeyValue"
+										showSuggestion="true"
+										showValueHelp="true"
+										valueHelpRequest="handleSearchItem"
+										suggestionItems="{
+											path: '/ItemContabils',
+											events: {
+												dataReceived: '.itemContabilReceived'
+											}
+										}"
+										id="itemcontabil">
+										<suggestionItems>
+											<core:ListItem key="{Id}" text="{Descricao}"/>
+										</suggestionItems>
+									</Input>
+								</f:content>
+							</f:SimpleForm>
+						</Panel>
 					</VBox>
 				</content>
 				<footer>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<Button id="salvar" text="Salvar" press="onSalvar" class="sapUiSmallMarginEnd"/>
+						<Button icon="sap-icon://save" id="salvar" text="Salvar" press="onSalvar"/>
+						<Button icon="sap-icon://reset" id="voltar" text="Cancelar" press="onVoltar"/>
 					</Toolbar>
 				</footer>
 			</Page>

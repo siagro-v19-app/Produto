@@ -16,6 +16,7 @@ sap.ui.define([
 		onRefresh: function(e){
 			var oModel = this.getOwnerComponent().getModel();
 			oModel.refresh(true);
+			this.getView().byId("tableProduto").clearSelection();
 		},
 		
 		onIncluir: function(){
@@ -35,7 +36,7 @@ sap.ui.define([
 			var nIndex = oTable.getSelectedIndex();
 			
 			if (nIndex === -1){
-				MessageBox.information("Selecione um produto da tabela.");
+				MessageBox.warning("Selecione um produto da tabela.");
 				return;
 			}
 			
@@ -53,7 +54,7 @@ sap.ui.define([
 			var nIndex = oTable.getSelectedIndex();
 			
 			if (nIndex === -1){
-				MessageBox.information("Selecione um produto da tabela.");
+				MessageBox.warning("Selecione um produto da tabela.");
 				return;
 			}
 			
@@ -75,9 +76,6 @@ sap.ui.define([
 				success: function(){
 					oModel.refresh(true);
 					oTable.clearSelection();
-				},
-				error: function(oError){
-					MessageBox.error(oError.responseText);
 				}
 			});
 		}

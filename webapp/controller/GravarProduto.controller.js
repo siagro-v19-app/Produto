@@ -2,8 +2,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"sap/m/MessageBox",
-	"sap/ui/model/json/JSONModel"
-], function(Controller, History, MessageBox, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"br/com/idxtecProdutos/helpers/UnidadeMedidaHelpDialog",
+	"br/com/idxtecProdutos/helpers/ContaContabilHelpDialog",
+	"br/com/idxtecProdutos/helpers/ItemContabilHelpDialog",
+	"br/com/idxtecProdutos/services/Session"
+], function(Controller, History, MessageBox, JSONModel, UnidadeMedidaHelpDialog, ContaContabilHelpDialog,
+	ItemContabilHelpDialog, Session) {
 	"use strict";
 
 	return Controller.extend("br.com.idxtecProdutos.controller.GravarProduto", {
@@ -20,6 +25,33 @@ sap.ui.define([
 			this.getOwnerComponent().setModel(oJSONModel, "model");
 		},
 		
+		unidadeMedidaReceived: function() {
+			this.getView().byId("unidade").setSelectedKey(this.getModel("model").getProperty("/UnidadeMedida"));
+		},
+		
+		contaContabilReceived: function() {
+			this.getView().byId("contacontabil").setSelectedKey(this.getModel("model").getProperty("/ContaContabil"));
+		},
+		
+		itemContabilReceived: function() {
+			this.getView().byId("itemcontabil").setSelectedKey(this.getModel("model").getProperty("/ItemContabil"));
+		},
+		
+		handleSearchUnidade: function(oEvent){
+			var sInputId = oEvent.getParameter("id");
+			UnidadeMedidaHelpDialog.handleValueHelp(this.getView(), sInputId, this);
+		},
+		
+		handleSearchConta: function(oEvent){
+			var sInputId = oEvent.getParameter("id");
+			ContaContabilHelpDialog.handleValueHelp(this.getView(), sInputId, this);
+		},
+		
+		handleSearchItem: function(oEvent){
+			var sInputId = oEvent.getParameter("id");
+			ItemContabilHelpDialog.handleValueHelp(this.getView(), sInputId, this);
+		},
+		
 		_routerMatch: function(){
 			var oParam = this.getOwnerComponent().getModel("parametros").getData();
 			var oJSONModel = this.getOwnerComponent().getModel("model");
@@ -28,6 +60,10 @@ sap.ui.define([
 			
 			this._operacao = oParam.operacao;
 			this._sPath = oParam.sPath;
+			
+			this.getView().byId("unidade").setValue("");
+			this.getView().byId("contacontabil").setValue("");
+			this.getView().byId("itemcontabil").setValue("");
 			
 			if(this._operacao === "incluir"){
 				
@@ -39,12 +75,17 @@ sap.ui.define([
 					"Id": 0,
 					"Codigo": "",
 					"Descricao": "",
-					"UnidadeMedida": 0
+					"UnidadeMedida": 0,
+					"ContaContabil": "",
+					"ItemContabil": 0,
+					"Empresa" : Session.get("EMPRESA_ID"),
+					"Usuario": Session.get("USUARIO_ID"),
+					"EmpresaDetails": { __metadata: { uri: "/Empresas(" + Session.get("EMPRESA_ID") + ")"}},
+					"UsuarioDetails": { __metadata: { uri: "/Usuarios(" + Session.get("USUARIO_ID") + ")"}}
 				};
 				
 				oJSONModel.setData(oNovoProduto);
 				
-				this.getView().byId("unidade").setSelectedKey("");
 			} else if(this._operacao === "editar"){
 				
 				oViewModel.setData({
@@ -54,9 +95,6 @@ sap.ui.define([
 				oModel.read(oParam.sPath, {
 					success: function(oData){
 						oJSONModel.setData(oData);
-					},
-					error: function(oError){
-						MessageBox.error(oError.responseText);
 					}
 				});
 			}
@@ -64,7 +102,7 @@ sap.ui.define([
 		
 		onSalvar: function(){
 			if (this._checarCampos(this.getView())) {
-				MessageBox.information("Preencha todos os campos obrigatórios!");
+				MessageBox.warning("Preencha todos os campos obrigatórios!");
 				return;
 			}
 			
@@ -73,6 +111,33 @@ sap.ui.define([
 			}else if(this._operacao === "editar"){
 				this._updateProduto();
 			}
+		},
+		
+		_getDados: function(){
+			var oJSONModel = this.getOwnerComponent().getModel("model");
+			var oDados = oJSONModel.getData();
+			
+			oDados.ItemContabil = oDados.ItemContabil ? oDados.ItemContabil : 0;
+			
+			oDados.UnidadeMedidaDetails = {
+				__metadata: {
+					uri: "/UnidadeMedidas(" + oDados.UnidadeMedida + ")"
+				}
+			};
+			
+			oDados.PlanoContaDetails = {
+				__metadata: {
+					uri: "/PlanoContas('" + oDados.ContaContabil + "')"
+				}
+			};
+			
+			oDados.ItemContabilDetails = {
+				__metadata: {
+					uri: "/ItemContabils(" + oDados.ItemContabil + ")"
+				}
+			};
+			
+			return oDados;
 		},
 		
 		_goBack: function(){
@@ -89,62 +154,38 @@ sap.ui.define([
 		
 		_createProduto: function(){
 			var oModel = this.getOwnerComponent().getModel();
-			var oJSONModel = this.getOwnerComponent().getModel("model");
 			var that = this;
+
 			
-			var oDados = oJSONModel.getData();
-			
-			oDados.UnidadeMedida = parseInt(oDados.UnidadeMedida, 0);
-			oDados.UnidadeMedidaDetails = {
-				__metadata: {
-					uri: "/UnidadeMedidas(" + oDados.UnidadeMedida + ")"
-				}
-			};
-			oModel.create("/Produtos", oDados, {
+			oModel.create("/Produtos", this._getDados(), {
 				success: function() {
 					MessageBox.success("Produto inserido com sucesso.", {
 						onClose: function(){
 							that._goBack();
 						}
 					});
-				},
-				error: function(oError) {
-					MessageBox.error(oError.responseText);
 				}
 			});
 		},
 		
 		_updateProduto: function(){
 			var oModel = this.getOwnerComponent().getModel();
-			var oJSONModel = this.getOwnerComponent().getModel("model");
 			var that = this;
 			
-			var oDados = oJSONModel.getData();
-			
-			oDados.UnidadeMedida = parseInt(oDados.UnidadeMedida, 0);
-			oDados.UnidadeMedidaDetails = {
-				__metadata:{
-					uri: "/UnidadeMedidas(" + oDados.UnidadeMedida + ")"
-				}
-			};
-			
-			oModel.update(this._sPath, oDados, {
+			oModel.update(this._sPath, this._getDados(), {
 				success: function(){
 					MessageBox.success("Produto alterado com sucesso.", {
 						onClose: function(){
 							that._goBack();
 						}
 					});
-				},
-				error: function(oError){
-					MessageBox.error(oError.responseText);
 				}
 			});
 		},
 		
 		_checarCampos: function(oView){
 			if(oView.byId("codigo").getValue() === "" || oView.byId("descricao").getValue() === ""
-			|| oView.byId("unidade").getSelectedItem() === null){
+			|| oView.byId("unidade").getValue() === ""){
 				return true;
 			} else{
 				return false; 
