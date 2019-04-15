@@ -4,7 +4,7 @@
 	<SelectDialog
 		title="Conta Contábil"
 		class="sapUiPopupWithPadding sapUiSizeCompact"
-		items="{/PlanoContas}"
+		items="{path: '/PlanoContas', sorter: {path: 'Descricao'}}"
 		search="_handleValueHelpSearch"
 		confirm="_handleValueHelpClose"
 		cancel="_handleValueHelpClose">

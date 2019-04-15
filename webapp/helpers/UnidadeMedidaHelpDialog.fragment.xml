@@ -4,7 +4,7 @@
 	<SelectDialog
 		title="Unidade de Medida"
 		class="sapUiPopupWithPadding sapUiSizeCompact"
-		items="{/UnidadeMedidas}"
+		items="{path: '/UnidadeMedidas', sorter: {path: 'Sigla'}}"
 		search="_handleValueHelpSearch"
 		confirm="_handleValueHelpClose"
 		cancel="_handleValueHelpClose">

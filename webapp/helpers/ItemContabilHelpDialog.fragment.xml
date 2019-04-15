@@ -4,7 +4,7 @@
 	<SelectDialog
 		title="Item Contábil"
 		class="sapUiPopupWithPadding sapUiSizeCompact"
-		items="{/ItemContabils}"
+		items="{path: '/ItemContabils', sorter: {path: 'Descricao'}}"
 		search="_handleValueHelpSearch"
 		confirm="_handleValueHelpClose"
 		cancel="_handleValueHelpClose">
