@@ -28,7 +28,7 @@
 							<Toolbar>
 								<Title text="Lista de Produtos"/>
 								<ToolbarSpacer/>
-								<SearchField placeholder="Pesquisar produto..." width="30%" search="filtraProduto"/>
+								<SearchField placeholder="Pesquisar descrição..." width="30%" search="filtraProduto"/>
 							</Toolbar> 
 						</t:toolbar>
 						<t:columns>

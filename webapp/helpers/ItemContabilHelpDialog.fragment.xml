@@ -1,17 +1,39 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-	<SelectDialog
+	<TableSelectDialog
 		title="Item Contábil"
 		class="sapUiPopupWithPadding sapUiSizeCompact"
 		items="{path: '/ItemContabils', sorter: {path: 'Descricao'}}"
 		search="_handleValueHelpSearch"
 		confirm="_handleValueHelpClose"
 		cancel="_handleValueHelpClose">
-		<StandardListItem
-			iconDensityAware="false"
-			iconInset="false"
-			title="{Descricao}"
-			description="{Id}"/>
-	</SelectDialog>
+		<ColumnListItem>
+			<cells>
+				<ObjectNumber
+					number="{Codigo}"/>
+				<ObjectIdentifier
+					title="{Descricao}"/>
+				<ObjectIdentifier
+					title="{Condicao}"/>
+			</cells>
+		</ColumnListItem>
+		<columns>
+			<Column width="6em">
+				<header>
+					<Text text="Código"/>
+				</header>
+			</Column>
+			<Column width="12em">
+				<header>
+					<Text text="Descrição"/>
+				</header>
+			</Column>
+			<Column width="12em">
+				<header>
+					<Text text="Condição"/>
+				</header>
+			</Column>
+		</columns>
+	</TableSelectDialog>
 </core:FragmentDefinition>

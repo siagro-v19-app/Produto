@@ -11,7 +11,7 @@ sap.ui.define([
 			this._inputId = sInputId;
 			
 			oController.getOwnerComponent().getModel().refresh(true);
-			
+
 			var sFrag = "br.com.idxtecProdutos.helpers.ContaContabilHelpDialog"; 
 			if (!this._valueHelpDialog) {
 				this._valueHelpDialog = sap.ui.xmlfragment(sFrag,this);
@@ -24,7 +24,7 @@ sap.ui.define([
 		_handleValueHelpSearch : function (evt) {
 			var sValue = evt.getParameter("value");
 			var aFilters = [];
-			var oFilter1 = new sap.ui.model.Filter( "Descricao", sap.ui.model.FilterOperator.Contains, sValue);
+			var oFilter1 = new Filter( "Descricao", FilterOperator.Contains, sValue);
 			aFilters.push(oFilter1);
 			
 			evt.getSource().getBinding("items").filter(aFilters);
@@ -34,8 +34,10 @@ sap.ui.define([
 		_handleValueHelpClose : function (evt) {
 			var oSelectedItem = evt.getParameter("selectedItem");
 			if (oSelectedItem) {
-				var oInput = sap.ui.getCore().byId(this._inputId); 
-				var sId = oSelectedItem.getDescription();
+				var oInput = this._oView.byId(this._inputId);
+				var oCells = oSelectedItem.getCells();
+				
+				var sId = oCells[0].getNumber();
 
 				oInput.setSelectedKey(sId);
 			}
@@ -44,5 +46,4 @@ sap.ui.define([
 			this._valueHelpDialog = undefined;
 		}
 	};
-	
 });
